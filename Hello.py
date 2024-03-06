@@ -15,6 +15,20 @@
 import streamlit as st
 from streamlit.logger import get_logger
 
+import streamlit as st
+import pandas as pd
+import seaborn as sns
+import numpy as np
+
+import matplotlib.pyplot as plt
+
+from scipy import stats
+from sklearn import metrics
+from sklearn.cluster import KMeans
+from sklearn.linear_model import LinearRegression, LogisticRegression
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import LabelEncoder
+
 LOGGER = get_logger(__name__)
 
 
@@ -24,30 +38,50 @@ def run():
         page_icon="👋",
     )
 
-    st.write("# Welcome to Streamlit! 👋")
+    st.title('Regression and Classification')
 
-    st.sidebar.success("Select a demo above.")
+    st.subheader('Raw Data')
 
-    st.markdown(
-        """
-        Streamlit is an open-source app framework built specifically for
-        Machine Learning and Data Science projects.
-        **👈 Select a demo from the sidebar** to see some examples
-        of what Streamlit can do!
-        ### Want to learn more?
-        - Check out [streamlit.io](https://streamlit.io)
-        - Jump into our [documentation](https://docs.streamlit.io)
-        - Ask a question in our [community
-          forums](https://discuss.streamlit.io)
-        ### See more complex demos
-        - Use a neural net to [analyze the Udacity Self-driving Car Image
-          Dataset](https://github.com/streamlit/demo-self-driving)
-        - Explore a [New York City rideshare dataset](https://github.com/streamlit/demo-uber-nyc-pickups)
-    """
-    )
+    # The URL of the CSV file to be read into a DataFrame
+    csv_url = "https://raw.githubusercontent.com/stedy/Machine-Learning-with-R-datasets/master/insurance.csv"
 
-    st.write("Welcome to Streamlit! 👋👋👋👋")
+    # Reading the CSV data from the specified URL into a DataFrame named 'df'
+    df = pd.read_csv(csv_url)
 
+    # Display the dataset
+    st.write(df)
+
+    # Remove duplicate row from dataset
+    df.drop_duplicates(keep='first', inplace=True)
+
+    # Encode 'sex', 'smoker', and 'region' columns
+    df['sex_encode'] = LabelEncoder().fit_transform(df['sex'])
+    df['smoker_encode'] = LabelEncoder().fit_transform(df['smoker'])
+    df['region_encode'] = LabelEncoder().fit_transform(df['region'])
+
+
+    # Transform the 'charges' variable using Box-Cox transformation
+    df['charges_transform'] = stats.boxcox(df['charges'])[0]
+
+    # Define X (features) and y (target) and remove duplicate features that will not be used in the model
+    X = df.drop(['sex', 'smoker', 'region', 'charges', 'charges',
+                'charges_transform'], axis=1)
+    y = df['charges_transform']
+
+    # Split the dataset into X_train, X_test, y_train, and y_test, 10% of the data for testing
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.1, random_state=0)
+
+    # Instantiate a linear regression model
+    linear_model = LinearRegression()
+
+    # Fit the model using the training data
+    linear_model.fit(X_train, y_train)
+
+    # For each record in the test set, predict the y value (transformed value of charges)
+    # The predicted values are stored in the y_pred array
+    y_pred = linear_model.predict(X_test)
+
+    st.write(y_pred)
 
 if __name__ == "__main__":
     run()
