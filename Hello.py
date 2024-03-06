@@ -46,6 +46,8 @@ def run():
     """
     )
 
+    st.write("Welcome to Streamlit! 👋👋👋👋")
+
 
 if __name__ == "__main__":
     run()
