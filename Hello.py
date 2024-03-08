@@ -36,19 +36,11 @@ from scipy.stats import boxcox_normplot
 
 LOGGER = get_logger(__name__)
 
-def plot_bar(df, feature):
-    fig = plt.figure(figsize=(6, 4))
-    df[feature].value_counts().plot(kind='bar', color='skyblue')
-    plt.title(f'Distribution of {feature}')
-    plt.xlabel(feature)
-    plt.ylabel('Count')
-    st.pyplot(fig)
-
 
 def run():
     st.set_page_config(
-        page_title="Hello",
-        page_icon="👋",
+        page_title="Medical Insurance Charges Regression",
+        page_icon="📊",
     )
 
     st.title('Regression')
@@ -136,7 +128,7 @@ def run():
 
 
     # Create Streamlit app
-    st.title('Predict Your Own Charges')
+    st.write('## Predict Your Own Charges')
 
     # User input for features
     age = st.slider('Age', min_value=df['age'].min(), max_value=df['age'].max(), value=int(df['age'].mode()))
