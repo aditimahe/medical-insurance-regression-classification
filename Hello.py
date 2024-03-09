@@ -15,6 +15,7 @@
 # Import necessary libraries
 import streamlit as st
 from streamlit.logger import get_logger
+
 import pandas as pd
 import seaborn as sns
 import numpy as np
@@ -121,9 +122,6 @@ def run():
 
     # Predict charges for the test set
     y_pred = linear_model.predict(X_test)
-
-    # Display the first few rows of the features
-    st.write(X.head())
 
     # Create section for user to predict their own charges
     st.write('## Predict Your Own Charges')
